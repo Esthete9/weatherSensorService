@@ -31,5 +31,17 @@ public class SensorServiceImpl implements SensorService {
         sensorRepository.save(sensor);
     }
 
+    @Transactional
+    public void update(String oldName, String newName) {
+        Sensor sensor = findOne(oldName);
+        sensor.setName(newName);
+        sensorRepository.save(sensor);
+    }
+
+    @Transactional
+    public void delete(Sensor sensorDelete) {
+        sensorRepository.delete(findOne(sensorDelete.getName()));
+    }
+
 
 }

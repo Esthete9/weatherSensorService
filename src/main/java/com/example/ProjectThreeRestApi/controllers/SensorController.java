@@ -4,6 +4,9 @@ import com.example.ProjectThreeRestApi.dto.SensorDTO;
 import com.example.ProjectThreeRestApi.models.Sensor;
 import com.example.ProjectThreeRestApi.services.SensorService;
 import com.example.ProjectThreeRestApi.util.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +40,26 @@ public class SensorController {
             returnErrorsToClient(bindingResult);
 
         sensorService.save(convertToSensor(sensorDTO));
+
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @PatchMapping ("/edit")
+    public ResponseEntity<HttpStatus> editSensor(@RequestBody String response) throws JsonProcessingException {
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode obj = mapper.readTree(response);
+        sensorService.update(obj.get("oldName").asText(), obj.get("newName").asText());
+
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<HttpStatus> deleteSensor(@RequestBody @Valid SensorDTO sensorDTO, BindingResult bindingResult) {
+        if (bindingResult.hasErrors())
+            returnErrorsToClient(bindingResult);
+
+        sensorService.delete(convertToSensor(sensorDTO));
 
         return ResponseEntity.ok(HttpStatus.OK);
     }
